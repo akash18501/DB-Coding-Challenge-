@@ -1,27 +1,34 @@
 import React, { useMemo, useState, useEffect } from "react";
 import MaterialReactTable from "material-react-table";
-import { Box, Button, ListItemIcon, MenuItem, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  LinearProgress,
+  ListItemIcon,
+  MenuItem,
+  Typography,
+} from "@mui/material";
 import { AccountCircle, Send } from "@mui/icons-material";
-import { makeData } from "./makeData";
+// import { makeData } from "./makeData";
 import ResponsiveAppBar from "./ResponsiveAppBar";
 import TradeTable from "./TradeTable";
-import { getAllSecurities } from "../api/api";
+import { getWatchList } from "../api/api";
 
-const Table = () => {
-  const [securities, setSecurities] = useState([]);
+const WatchList = () => {
+  const [watchlist, setWatchList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     console.log("call to api");
 
-    getAllSecurities().then((data) => {
-      setSecurities(data);
+    getWatchList(2).then((data) => {
+      setWatchList(data);
     });
   }, []);
 
   useEffect(() => {
-    console.log("securities in table", securities);
-  }, [securities]);
+    console.log("securities in table", watchlist);
+  }, [watchlist]);
 
   const columns = useMemo(
     () => [
@@ -64,18 +71,16 @@ const Table = () => {
     []
   );
 
-  const [employeeData, setEmployeeData] = useState(() => makeData());
-
   return (
     <>
       <ResponsiveAppBar />
       <Typography variant="h3" component="h2" m={3}>
-        Bonds Experiment
+        Watchlist
       </Typography>
-      {securities.length > 0 ? (
+      {watchlist.length > 0 ? (
         <MaterialReactTable
           columns={columns}
-          data={securities}
+          data={watchlist}
           enableClickToCopy
           enableColumnFilterChangeMode
           enableColumnOrdering
@@ -85,42 +90,41 @@ const Table = () => {
           enablePinning
           // enableRowActions
           // enableRowNumbers
-          enableRowSelection
+          // enableRowSelection
           // muiSelectCheckboxProps={({ row }) => ({
           //   disabled: row.getValue("salary") < 60000,
           // })}
           // onEditRowSubmit={handleSaveRow}
           positionToolbarAlertBanner="bottom"
           renderDetailPanel={({ row }) => {
-            // console.log("row called ", row.original.trades);
             return <TradeTable tradeData={row.original.trades} />;
           }}
-          renderTopToolbarCustomActions={({ table }) => {
-            const handleAddToTheBook = () => {
-              table.getSelectedRowModel().flatRows.map((row) => {
-                alert("contact " + row.getValue("name"));
-              });
-            };
+          // renderTopToolbarCustomActions={({ table }) => {
+          //   const handleAddToTheBook = () => {
+          //     table.getSelectedRowModel().flatRows.map((row) => {
+          //       alert("contact " + row.getValue("name"));
+          //     });
+          //   };
 
-            return (
-              <div style={{ display: "flex", gap: "0.5rem" }}>
-                <Button
-                  color="info"
-                  disabled={table.getSelectedRowModel().flatRows.length === 0}
-                  onClick={handleAddToTheBook}
-                  variant="contained"
-                >
-                  Add to the book
-                </Button>
-              </div>
-            );
-          }}
+          //   return (
+          //     <div style={{ display: "flex", gap: "0.5rem" }}>
+          //       <Button
+          //         color="info"
+          //         disabled={table.getSelectedRowModel().flatRows.length === 0}
+          //         onClick={handleAddToTheBook}
+          //         variant="contained"
+          //       >
+          //         Add to the book
+          //       </Button>
+          //     </div>
+          //   );
+          // }}
         />
       ) : (
-        <h1>Loading...</h1>
+        <LinearProgress color="primary" />
       )}
     </>
   );
 };
 
-export default Table;
+export default WatchList;
