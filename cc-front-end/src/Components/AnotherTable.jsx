@@ -4,6 +4,7 @@ import { Box, Button, ListItemIcon, MenuItem, Typography } from "@mui/material";
 import { AccountCircle, Send } from "@mui/icons-material";
 import { makeData } from "./makeData";
 import ResponsiveAppBar from "./ResponsiveAppBar";
+import TradeTable from "./TradeTable";
 
 const Table = () => {
     const columns = useMemo(
@@ -110,33 +111,14 @@ const Table = () => {
                 // enableRowActions
                 // enableRowNumbers
                 enableRowSelection
+                muiSelectCheckboxProps={({ row }) => ({
+                    disabled: row.getValue("salary") < 60000,
+                })}
                 // onEditRowSubmit={handleSaveRow}
                 positionToolbarAlertBanner="bottom"
-                renderDetailPanel={({ row }) => (
-                    <Box
-                        sx={{
-                            display: "flex",
-                            justifyContent: "space-around",
-                            alignItems: "center",
-                        }}
-                    >
-                        <img
-                            alt="avatar"
-                            height={200}
-                            src={row.original.avatar}
-                            loading="lazy"
-                            style={{ borderRadius: "50%" }}
-                        />
-                        <Box sx={{ textAlign: "center" }}>
-                            <Typography variant="h4">
-                                Signature Catch Phrase:
-                            </Typography>
-                            <Typography variant="h1">
-                                &quot;{row.original.signatureCatchPhrase}&quot;
-                            </Typography>
-                        </Box>
-                    </Box>
-                )}
+                renderDetailPanel={({ row }) => {
+                    return <TradeTable />;
+                }}
                 renderTopToolbarCustomActions={({ table }) => {
                     const handleAddToTheBook = () => {
                         table.getSelectedRowModel().flatRows.map((row) => {
